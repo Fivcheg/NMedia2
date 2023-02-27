@@ -8,7 +8,6 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import ru.netology.nmedia.dto.Post
 
-
 class PostRepositoryImpl : PostRepository {
     private val client = OkHttpClient
         .Builder()
@@ -49,8 +48,6 @@ class PostRepositoryImpl : PostRepository {
         client.newCall(request)
             .execute()
             .close()
-
-
     }
 
     override fun save(post: Post) {
