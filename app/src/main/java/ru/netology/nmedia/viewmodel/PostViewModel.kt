@@ -19,7 +19,6 @@ private val empty = Post(
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
-    // упрощённый вариант
     private val repository: PostRepository = PostRepositoryImpl()
     private val _data = MutableLiveData(FeedModel())
     val data: LiveData<FeedModel>
@@ -72,8 +71,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun likeById(id: Long, likedByMe: Boolean) {
         thread {
-            repository.likeById(id, likedByMe)
-            loadPosts()
+            val likedPost = repository.likeById(id, likedByMe)
+            _data.postValue(FeedModel(posts = _data.value?.posts.orEmpty()
+                .map {
+                    if (it.id == id) likedPost else it
+                }
+            )
+            )
         }
     }
 
@@ -94,3 +98,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 }
+
+
+
+
