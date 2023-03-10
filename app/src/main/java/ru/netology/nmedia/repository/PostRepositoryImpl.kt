@@ -2,11 +2,11 @@ package ru.netology.nmedia.repository
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import ru.netology.nmedia.dto.Post
+import java.io.IOException
 
 class PostRepositoryImpl : PostRepository {
     private val client = OkHttpClient
@@ -20,20 +20,41 @@ class PostRepositoryImpl : PostRepository {
         private val jsonType = "application/json".toMediaType()
     }
 
-    override fun getAll(): List<Post> {
+    override fun getAll(callback: PostRepository.PostsCallback<List<Post>>) {
         val request: Request = Request.Builder()
             .url("${BASE_URL}/api/slow/posts")
             .build()
 
         return client.newCall(request)
-            .execute()
-            .let { it.body?.string() ?: throw RuntimeException("body is null") }
-            .let {
-                gson.fromJson(it, typeToken.type)
-            }
+            .enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    callback.onError(e)
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if (!response.isSuccessful) {
+                        callback.onError(Exception(response.message))
+                    } else {
+                        try {
+                            callback.onSuccess(
+                                gson.fromJson(
+                                    requireNotNull(response.body?.string()) { "body is null" },
+                                    typeToken
+                                )
+                            )
+                        } catch (e: Exception) {
+                            callback.onError(e)
+                        }
+                    }
+                }
+            })
     }
 
-    override fun likeById(id: Long, likedByMe: Boolean) : Post {
+    override fun likeById(
+        id: Long,
+        likedByMe: Boolean,
+        callback: PostRepository.PostsCallback<Post>
+    ) {
         val request: Request = Request.Builder()
             .run {
                 if (likedByMe) {
@@ -46,14 +67,31 @@ class PostRepositoryImpl : PostRepository {
             .build()
 
         return client.newCall(request)
-            .execute()
-            .let { it.body?.string() ?: throw RuntimeException("body is null") }
-            .let {
-                gson.fromJson(it, Post::class.java)
-            }
+            .enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    callback.onError(e)
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if (!response.isSuccessful) {
+                        callback.onError(Exception(response.message))
+                    } else {
+                        try {
+                            callback.onSuccess(
+                                gson.fromJson(
+                                    requireNotNull(response.body?.string()) { "body is null" },
+                                    Post::class.java
+                                )
+                            )
+                        } catch (e: Exception) {
+                            callback.onError(e)
+                        }
+                    }
+                }
+            })
     }
 
-    override fun save(post: Post){
+    override fun save(post: Post) {
 
         val request: Request = Request.Builder()
             .post(gson.toJson(post).toRequestBody(jsonType))

@@ -33,18 +33,17 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadPosts() {
-        thread {
-            // Начинаем загрузку
-            _data.postValue(FeedModel(loading = true))
-            try {
-                // Данные успешно получены
-                val posts = repository.getAll()
-                FeedModel(posts = posts, empty = posts.isEmpty())
-            } catch (e: IOException) {
-                // Получена ошибка
-                FeedModel(error = true)
-            }.also(_data::postValue)
-        }
+        _data.value = FeedModel(loading = true)
+        repository.getAll(object : PostRepository.PostsCallback<List<Post>> {
+
+            override fun onSuccess(data: List<Post>) {
+                _data.postValue(FeedModel(posts = data, empty = data.isEmpty()))
+            }
+
+            override fun onError(e: Exception) {
+                _data.postValue(FeedModel(error = true))
+            }
+        })
     }
 
     fun save() {
@@ -69,16 +68,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = edited.value?.copy(content = text)
     }
 
-    fun likeById(id: Long, likedByMe: Boolean) {
-        thread {
-            val likedPost = repository.likeById(id, likedByMe)
-            _data.postValue(FeedModel(posts = _data.value?.posts.orEmpty()
-                .map {
-                    if (it.id == id) likedPost else it
-                }
-            )
-            )
-        }
+    fun likeById() {
+        _data.value = FeedModel(loading = true)
+
+        repository.getAll(object : PostRepository.PostsCallback<List<Post>> {
+
+            override fun onSuccess(data: List<Post>) {
+                _data.value = FeedModel(posts = _data.value?.posts.orEmpty())
+            }
+
+            override fun onError(e: Exception) {
+                _data.postValue(FeedModel(error = true))
+            }
+        })
     }
 
     fun removeById(id: Long) {
