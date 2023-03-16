@@ -54,7 +54,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _data.postValue(FeedModel(error = true))
             }
         })
-               edited.value = empty
+        edited.value = empty
     }
 
     fun edit(post: Post) {
@@ -93,8 +93,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                 _data.postValue(
                     FeedModel(
                         posts = _data.value?.posts.orEmpty()
-                            .filter {
-                                it.id != id }
+                            .filter { it.id != id }
                     )
                 )
             }
