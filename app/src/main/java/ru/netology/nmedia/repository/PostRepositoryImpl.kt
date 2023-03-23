@@ -1,10 +1,13 @@
 package ru.netology.nmedia.repository
 
+import android.os.Bundle
+import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import ru.netology.nmedia.R
 import ru.netology.nmedia.dto.Post
 import java.io.IOException
 
@@ -17,13 +20,16 @@ class PostRepositoryImpl : PostRepository {
 
     companion object {
         private const val BASE_URL = "http://10.0.2.2:9999"
+        const val BASE_URL_OPEN = BASE_URL
         private val jsonType = "application/json".toMediaType()
+        val jsonTypeOpen = jsonType
     }
 
     override fun getAll(callback: PostRepository.PostsCallback<List<Post>>) {
         val request: Request = Request.Builder()
             .url("${BASE_URL}/api/slow/posts")
             .build()
+
 
         return client.newCall(request)
             .enqueue(object : Callback {
@@ -139,12 +145,12 @@ class PostRepositoryImpl : PostRepository {
                         callback.onError(Exception(response.message))
                     } else {
                         try {
-                            callback.onSuccess(
-                                gson.fromJson(
-                                    requireNotNull(response.body?.string()) { "body is null" },
-                                    Post::class.java
-                                )
-                            )
+//                            callback.onSuccess(
+////                                gson.fromJson(
+////                                    requireNotNull(response.body?.string()) { "body is null" },
+////                                    Post::class.java
+////                                )
+//                            )
                         } catch (e: Exception) {
                             callback.onError(e)
                         }
@@ -152,5 +158,6 @@ class PostRepositoryImpl : PostRepository {
                 }
             })
     }
+
 }
 

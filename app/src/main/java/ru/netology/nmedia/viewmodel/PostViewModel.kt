@@ -88,7 +88,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeById(id: Long) {
-        val old = _data.value?.posts.orEmpty()
+      //  val old = _data.value?.posts.orEmpty()
         repository.removeById(id, object : PostRepository.PostsCallback<Post> {
             override fun onSuccess(data: Post) {
                 _data.postValue(
@@ -100,7 +100,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             override fun onError(e: Exception) {
-                _data.postValue(_data.value?.copy(posts = old))
+             //   _data.postValue(_data.value?.copy(posts = old))
                 _data.postValue(FeedModel(error = true))
             }
         })

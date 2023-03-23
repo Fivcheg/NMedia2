@@ -6,9 +6,12 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.CardPostBinding
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.repository.PostRepositoryImpl
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -41,7 +44,16 @@ class PostViewHolder(
             author.text = post.author
             published.text = post.published
             content.text = post.content
-            // в адаптере
+
+            Glide.with(binding.avatar.context)
+                .placeholder(R.drawable.ic_loading_100dp)
+                .error(R.drawable.ic_error_100dp)
+                .into(binding.avatar)
+                .timeout(10_000)
+                .asBitmap()
+                .transform(RoundedCorners(10))
+                .load("${PostRepositoryImpl.BASE_URL_OPEN}/avatars/tcs.jpg")
+
             like.isChecked = post.likedByMe
             like.text = "${post.likes}"
 
@@ -85,3 +97,5 @@ class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
         return oldItem == newItem
     }
 }
+
+
