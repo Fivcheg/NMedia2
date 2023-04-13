@@ -46,13 +46,12 @@ class PostViewHolder(
             content.text = post.content
 
             Glide.with(binding.avatar.context)
+                .load("${PostRepositoryImpl.BASE_URL_OPEN}/avatars/${post.authorAvatar}")
                 .placeholder(R.drawable.ic_loading_100dp)
                 .error(R.drawable.ic_error_100dp)
-                .into(binding.avatar)
                 .timeout(10_000)
-                .asBitmap()
                 .transform(RoundedCorners(10))
-                .load("${PostRepositoryImpl.BASE_URL_OPEN}/avatars/tcs.jpg")
+                .into(binding.avatar)
 
             like.isChecked = post.likedByMe
             like.text = "${post.likes}"

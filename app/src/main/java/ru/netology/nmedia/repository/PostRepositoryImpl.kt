@@ -1,13 +1,10 @@
 package ru.netology.nmedia.repository
 
-import android.os.Bundle
-import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
-import ru.netology.nmedia.R
 import ru.netology.nmedia.dto.Post
 import java.io.IOException
 
@@ -128,7 +125,7 @@ class PostRepositoryImpl : PostRepository {
             })
     }
 
-    override fun removeById(id: Long, callback: PostRepository.PostsCallback<Post>) {
+    override fun removeById(id: Long, callback: PostRepository.PostsCallback<Unit>) {
         val request: Request = Request.Builder()
             .delete()
             .url("${BASE_URL}/api/slow/posts/$id")
@@ -145,12 +142,7 @@ class PostRepositoryImpl : PostRepository {
                         callback.onError(Exception(response.message))
                     } else {
                         try {
-//                            callback.onSuccess(
-////                                gson.fromJson(
-////                                    requireNotNull(response.body?.string()) { "body is null" },
-////                                    Post::class.java
-////                                )
-//                            )
+                            callback.onSuccess(Unit)
                         } catch (e: Exception) {
                             callback.onError(e)
                         }
