@@ -30,10 +30,10 @@ class PostRepositoryImpl : PostRepository {
                 call: retrofit2.Call<List<Post>>,
                 response: retrofit2.Response<List<Post>>
             ) {
-                if (!response.isSuccessful) {
-                    callback.onError(RuntimeException(response.message()))
-                } else {
+                if (response.code()/100 == 2) {
                     callback.onSuccess(requireNotNull(response.body()) { "body is null" })
+                } else {
+                    callback.onError(RuntimeException(response.message()))
                 }
             }
 
@@ -55,10 +55,10 @@ class PostRepositoryImpl : PostRepository {
                     call: retrofit2.Call<Post>,
                     response: retrofit2.Response<Post>
                 ) {
-                    if (!response.isSuccessful) {
-                        callback.onError(RuntimeException(response.message()))
-                    } else {
+                    if (response.code()/100 == 2) {
                         callback.onSuccess(requireNotNull(response.body()) { "body is null" })
+                    } else {
+                        callback.onError(RuntimeException(response.message()))
                     }
                 }
 
@@ -75,10 +75,10 @@ class PostRepositoryImpl : PostRepository {
                     call: retrofit2.Call<Post>,
                     response: retrofit2.Response<Post>
                 ) {
-                    if (!response.isSuccessful) {
-                        callback.onError(RuntimeException(response.message()))
-                    } else {
+                    if (response.code()/100 == 2) {
                         callback.onSuccess(requireNotNull(response.body()) { "body is null" })
+                    } else {
+                        callback.onError(RuntimeException(response.message()))
                     }
                 }
 
@@ -94,10 +94,10 @@ class PostRepositoryImpl : PostRepository {
                 call: retrofit2.Call<Unit>,
                 response: retrofit2.Response<Unit>
             ) {
-                if (!response.isSuccessful) {
-                    callback.onError(RuntimeException(response.message()))
-                } else {
+                if (response.code()/100 == 2) {
                     callback.onSuccess(requireNotNull(response.body()) { "body is null" })
+                } else {
+                    callback.onError(RuntimeException(response.message()))
                 }
             }
 
@@ -108,4 +108,6 @@ class PostRepositoryImpl : PostRepository {
     }
 
 }
+
+
 

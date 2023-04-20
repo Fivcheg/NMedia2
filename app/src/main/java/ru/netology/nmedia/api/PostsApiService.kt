@@ -30,8 +30,6 @@ interface PostsApiService {
     @DELETE("posts/{id}/likes")
     fun dislikeById(@Path("id") id: Long): retrofit2.Call<Post>
 
-    @GET("posts/{id}")
-    fun getById(@Path("id") id: Long): retrofit2.Call<Post>
 }
 
 private val logging = HttpLoggingInterceptor().apply {
